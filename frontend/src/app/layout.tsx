@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { WalletContextProvider } from '../components/WalletContextProvider';
 
 export const metadata: Metadata = {
   title: 'Trendifi',
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <WalletContextProvider>
         {children}
+        </WalletContextProvider>
       </body>
     </html>
   );

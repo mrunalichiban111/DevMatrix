@@ -179,7 +179,7 @@ body {
   }
 
   #product-viewer .controls .color-control .active {
-    @apply ring-5 size-5 ring-light-100;
+    @apply ring-4 size-5 ring-light-100;
   }
 
   #product-viewer .controls .size-control {

@@ -1,12 +1,13 @@
 interface NavLink {
   label: string;
+  href: string;
 }
 
 const navLinks: NavLink[] = [
-  { label: 'HOME' },
-  { label: 'TRENDS' },
-  { label: 'MINT TREND' },
-  { label: 'ABOUT US' },
+  { label: 'HOME', href: '/' },
+  { label: 'TRENDS', href: '/trends' },
+  { label: 'MINT TREND', href: '/mint-trend' },
+  { label: 'ABOUT US', href: '/about-us' },
 ];
 
 export default navLinks;
