@@ -195,23 +195,23 @@ body {
   }
 
   #showcase {
-    @apply relative;
+    @apply relative w-full;
   }
 
   #showcase .media {
-    @apply relative z-0 lg:overflow-hidden;
+    @apply relative z-0 w-full h-screen min-h-[400px] lg:overflow-hidden;
   }
 
   #showcase .media video {
-    @apply w-full object-cover object-center;
+    @apply w-full h-full object-cover object-center;
   }
 
   #showcase .mask {
-    @apply absolute z-10 h-full top-0 lg:-top-20 xl:top-0;
+    @apply absolute z-10 w-full h-full top-0 lg:-top-20 xl:top-0 left-0;
   }
 
   #showcase .mask img {
-    @apply h-full scale-150 lg:scale-100;
+    @apply w-full h-full scale-150 lg:scale-100 object-cover object-center;
   }
 
   #showcase .content {

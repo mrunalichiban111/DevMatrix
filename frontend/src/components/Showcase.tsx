@@ -7,15 +7,31 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const Showcase = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const container = useRef(null);
 
   useGSAP(
     () => {
-      if (!isTablet) {
-        // REMOVED: gsap.set(".mask img", { y: 400 });
-        // Let the mask sit naturally at y: 0 so the text is fully visible.
+      if (isMobile) {
+        // Mobile: Simple fade-in animation
+        gsap.fromTo(".content", 
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            scrollTrigger: {
+              trigger: container.current,
+              start: "top center",
+              end: "center center",
+              scrub: 1,
+            },
+          }
+        );
+        return;
+      }
 
+      if (!isTablet) {
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: container.current,
@@ -27,22 +43,49 @@ const Showcase = () => {
         });
 
         timeline
-          // 1. THE PAUSE: Let the user read the mask text and watch the video
           .to(".mask img", {
             scale: 1,
             duration: 1,
           })
-          // 2. THE ZOOM
           .to(".mask img", {
             scale: 60,
-            // CRITICAL CHANGE: Instead of "center center", we set the focal point 
-            // to the X-center (50%) and roughly the Y-position of the logo hole (30%).
-            // This ensures the camera flies through the logo, not the black space.
             transformOrigin: "50% 30%", 
             ease: "power1.inOut",
             duration: 3,
           })
-          // 3. THE REVEAL: Fade in the content
+          .to(
+            ".content",
+            {
+              opacity: 1,
+              y: 0,
+              ease: "power1.in",
+              duration: 1,
+            },
+            "<80%"
+          );
+      } else {
+        // Tablet: Simplified animation
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: container.current,
+            start: "top top",
+            end: "+=150%",
+            scrub: 1,
+            pin: true,
+          },
+        });
+
+        timeline
+          .to(".mask img", {
+            scale: 1,
+            duration: 1,
+          })
+          .to(".mask img", {
+            scale: 30,
+            transformOrigin: "50% 30%",
+            ease: "power1.inOut",
+            duration: 2,
+          })
           .to(
             ".content",
             {
@@ -55,16 +98,12 @@ const Showcase = () => {
           );
       }
     },
-    { scope: container, dependencies: [isTablet] }
+    { scope: container, dependencies: [isMobile, isTablet] }
   );
 
   return (
-    <section id="showcase" ref={container}>
+    <section id="showcase" ref={container} className="overflow-hidden">
       <div className="media">
-        {/* VIDEO FRAMING FIX: 
-            If the video's subject isn't lining up with the mask holes, 
-            adjust the 'object-position' here to slide the video up or down inside its container 
-            while keeping the mask perfectly centered. */}
         <video 
           src="/assets/videos/video.mp4" 
           className="w-full h-full object-cover object-[center_top]"
@@ -83,15 +122,14 @@ const Showcase = () => {
         />
       </div>
 
-      <div className="content relative z-50" style={{ opacity: 0, transform: "translateY(50px)" }}>
-        {/* ... ALL YOUR CONTENT ... */}
+      <div className="content relative z-50 px-4 md:px-0" style={{ opacity: 0, transform: "translateY(50px)" }}>
         <div className="wrapper mt-5">
-          <div className="lg:max-w-md pt-5">
-            <h2 className="font-regular uppercase text-white text-[45px] leading-[50px] tracking-widest">
+          <div className="lg:max-w-md md:pt-5 pt-3">
+            <h2 className="font-regular uppercase text-white text-[32px] md:text-[45px] leading-[40px] md:leading-[50px] tracking-widest">
               bet on what will go viral
             </h2>
 
-            <div className="space-y-5 mt-7 pe-10 uppercase text-[12px]">
+            <div className="space-y-4 md:space-y-5 mt-5 md:mt-7 pe-4 md:pe-10 uppercase text-[11px] md:text-[12px] leading-relaxed">
               <p>
                 Turn ideas into <span className="text-white">tradable assets</span>.
                 Predict which memes, opinions, or trends will explode before the internet does.
@@ -113,16 +151,16 @@ const Showcase = () => {
             </div>
           </div>
 
-          <div className="max-w-3xs space-y-14 uppercase pt-5">
-            <div className="space-y-2 text-[12px]">
+          <div className="max-w-xs md:max-w-3xs space-y-8 md:space-y-14 uppercase pt-5 md:pt-5 px-0 md:px-0">
+            <div className="space-y-2 text-[11px] md:text-[12px]">
               <p>Up to</p>
-              <h3 className="text-[#39FF14] text-xl">10x returns</h3>
+              <h3 className="text-[#39FF14] text-lg md:text-xl">10x returns</h3>
               <p>on early trend predictions</p>
             </div>
 
-            <div className="space-y-2 text-[12px]">
+            <div className="space-y-2 text-[11px] md:text-[12px]">
               <p>Deployed on</p>
-              <h3 className="text-[#39FF14] text-xl">Solana</h3>
+              <h3 className="text-[#39FF14] text-lg md:text-xl">Solana</h3>
               <p>real-time sentiment & on-chain markets</p>
             </div>
           </div>

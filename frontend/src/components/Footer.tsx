@@ -5,24 +5,24 @@ const Footer = () => {
   return (
     <footer
       id="footer"
-      className="relative w-full bg-black border-t border-dark-200/50 pt-20 pb-0"
+      className="relative w-full bg-black border-t border-dark-200/50 pt-12 md:pt-20 pb-0"
     >
       <div className="container mx-auto px-5 2xl:px-0">
         {/* Main Footer Content */}
-        <div className="flex flex-col lg:flex-row justify-between gap-16 mb-16">
+        <div className="flex flex-col lg:flex-row justify-between gap-8 md:gap-16 mb-12 md:mb-16">
           {/* Brand Section */}
           <div className="flex flex-col gap-4 lg:w-1/3">
             <div className="flex items-center gap-2">
               <img
                 src="/assets/logo.svg"
-                alt="Red Stakes"
-                className="h-6 w-auto invert"
+                alt="Trendifi"
+                className="h-5 md:h-6 w-auto invert"
               />
-              <span className="text-white font-semibold text-sm tracking-widest uppercase">
+              <span className="text-white font-semibold text-xs md:text-sm tracking-widest uppercase">
                 Trendifi
               </span>
             </div>
-            <p className="text-dark-100 text-xs font-light leading-relaxed max-w-xs uppercase">
+            <p className="text-dark-100 text-xs font-light leading-relaxed max-w-xs uppercase text-justify">
               BET ON WHAT WILL GO VIRAL. TRADE ATTENTION LIKE MARKETS, PREDICT
               TRENDS BEFORE THE INTERNET DOES.
             </p>
@@ -30,7 +30,7 @@ const Footer = () => {
 
           {/* Links Section */}
           <div
-            className="flex flex-col lg:flex-row gap-12 lg:gap-20"
+            className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-row gap-6 md:gap-12 lg:gap-20 flex-1 lg:flex-none"
           >
             {/* Product */}
             <div className="flex flex-col gap-3">
@@ -73,7 +73,7 @@ const Footer = () => {
             </div>
 
             {/* Company */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
               <h3 className="text-white font-semibold text-xs uppercase tracking-widest">
                 Company
               </h3>
@@ -94,20 +94,20 @@ const Footer = () => {
         </div>
 
         {/* Divider with animation */}
-        <div className="footer-divider h-[1px] bg-dark-200/50 mb-8" />
+        <div className="footer-divider h-[1px] bg-dark-200/50 mb-6 md:mb-8" />
 
         {/* Bottom Section */}
         <div
-          className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 pb-6"
+          className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 md:gap-8 pb-6"
         >
           {/* Copyright */}
-          <p className="text-dark-100 text-xs font-light uppercase">
+          <p className="text-dark-100 text-xs font-light uppercase leading-relaxed">
             © 2026 TRENDIFI. ALL RIGHTS RESERVED. BUILT FOR THE FUTURE OF
             VIRALITY.
           </p>
 
           {/* Social Icons */}
-          <div className="flex gap-4">
+          <div className="flex gap-3 md:gap-4">
             {[
               {
                 name: "Twitter",
@@ -129,13 +129,13 @@ const Footer = () => {
                 key={social.name}
                 href={social.href}
                 aria-label={social.name}
-                className="social-icon group relative size-9 flex-center rounded-full border border-dark-200/50 hover:border-[#39FF14]/50 transition-all duration-300 ease-in-out hover:bg-[#39FF14]/10"
+                className="social-icon group relative size-8 md:size-9 flex-center rounded-full border border-dark-200/50 hover:border-[#39FF14]/50 transition-all duration-300 ease-in-out hover:bg-[#39FF14]/10"
               >
                 <span className="text-xs text-dark-100 group-hover:text-[#39FF14] transition-colors duration-300">
                   {social.icon}
                 </span>
                 {/* Tooltip */}
-                <div className="absolute -top-8 opacity-0 group-hover:opacity-100 bg-dark-200/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+                <div className="absolute -top-8 opacity-0 group-hover:opacity-100 bg-dark-200/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded transition-opacity duration-300 whitespace-nowrap pointer-events-none hidden md:block">
                   {social.name}
                 </div>
               </a>
@@ -146,7 +146,7 @@ const Footer = () => {
         {/* Scroll to top button */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="absolute right-5 lg:right-10 top-20 size-10 flex-center rounded-full border border-dark-200/50 text-dark-100 hover:text-[#39FF14] hover:border-[#39FF14]/50 transition-all duration-300 ease-in-out group"
+          className="absolute right-5 md:right-10 top-16 md:top-20 size-8 md:size-10 flex-center rounded-full border border-dark-200/50 text-dark-100 hover:text-[#39FF14] hover:border-[#39FF14]/50 transition-all duration-300 ease-in-out group"
           aria-label="Scroll to top"
         >
           <svg
