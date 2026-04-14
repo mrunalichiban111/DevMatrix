@@ -98,7 +98,7 @@ export default function TrendingPage() {
               {hotTrends.map((trend, index) => (
                 <div
                   key={trend.publicKey}
-                  onClick={() => router.push(`/trend/${trend.nftMint}`)}
+                  onClick={() => router.push(`/discover/${trend.nftMint}`)}
                   className="relative bg-gradient-to-br from-purple-900 to-neutral-900 border border-purple-700 rounded-xl overflow-hidden cursor-pointer hover:border-purple-400 hover:scale-[1.02] transition-all"
                 >
                   {/* Rank Badge */}
@@ -157,7 +157,7 @@ export default function TrendingPage() {
                 key={trend.publicKey}
                 trend={trend}
                 onBet={handleBet}
-                onClick={() => router.push(`/trend/${trend.nftMint}`)}
+                onClick={() => router.push(`/discover/${trend.nftMint}`)}
               />
             ))}
           </div>

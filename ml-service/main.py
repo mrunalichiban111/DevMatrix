@@ -119,8 +119,8 @@ async def calculate_virality(request: ViralityRequest):
             "search_title": request.title,
             "metrics": {
                 "relevant_posts": len(relevant_posts),
-                "raw_virality_power": round(raw_virality, 2),
-                "final_virality_score_100": round(final_score_100, 2)
+                "raw_virality_power": round(raw_virality, 0),
+                "final_virality_score_100": round(final_score_100, 0)
             },
         }
         

@@ -38,7 +38,11 @@ const Hero = () => {
   }, { dependencies: [isMobile, isTablet] })
 
   return (
-    <section ref={sectionRef} className="min-h-screen w-full flex flex-col items-center justify-center pt-16 md:pt-20 px-4 md:px-0">
+    <section
+      id="home"
+      ref={sectionRef}
+      className="min-h-screen w-full scroll-mt-[7vh] flex flex-col items-center justify-center pt-16 md:pt-20 px-4 md:px-0"
+    >
       <div className="w-full flex flex-col md:flex-row justify-between items-start gap-4 md:gap-10 mt-6 md:mt-10 px-0 md:px-10">
         <p ref={pLeftRef} className="flex-1 text-white font-light tracking-widest text-xs md:text-sm text-left inline align-top">
           SEE WHATS TRENDING
@@ -52,6 +56,12 @@ const Hero = () => {
         <h1 ref={h1Ref} className="font-overlord text-[80px] sm:text-[120px] md:text-[12vw] lg:text-[55vw] text-[#39FF14] leading-none text-center">
           TRENDIFI
         </h1>
+        <a
+          href="/discover"
+          className="mt-6 inline-flex items-center justify-center rounded-full border border-[#39FF14] bg-[#39FF14] px-6 py-2 my-10 text-[10px] sm:text-xs uppercase tracking-[0.35em] text-black shadow-[0_0_25px_rgba(57,255,20,0.25)] transition hover:bg-transparent hover:text-[#39FF14]"
+        >
+          Get Started - Join the feed
+        </a>
       </div>
     </section>
   )

@@ -79,7 +79,7 @@
 html {
   width: 100vw;
   overflow-x: hidden;
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   margin: 0;
   padding: 0;
 }

@@ -26,14 +26,27 @@ export const fetchNFTMetadata = async (mintAddress: string) => {
       "https://ipfs.io/ipfs/"
     );
 
+    const mediaUrl = (json.animation_url || json.video || null)?.replace(
+      "https://gateway.pinata.cloud/ipfs/",
+      "https://ipfs.io/ipfs/"
+    );
+
+    const mediaType = mediaUrl
+      ? (/(\.mp4|\.webm|\.mov|video)/i.test(mediaUrl) ? "video" : "image")
+      : image
+        ? "image"
+        : null;
+
     return {
       name: json.name || "Unknown",
       description: json.description || "",
       image: image || null,
+      mediaUrl,
+      mediaType,
     };
 
   } catch (err) {
     console.warn("⚠️ Metadata fetch failed:", mintAddress, err);
-    return { name: "Unknown NFT", description: "Metadata unavailable", image: null };
+    return { name: "Unknown NFT", description: "Metadata unavailable", image: null, mediaUrl: null, mediaType: null };
   }
 };
