@@ -9,47 +9,47 @@
 
 @font-face {
   font-family: "Thin";
-  src: url("/assets/fonts/Spartan-Thin.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Thin.otf");
 }
 
 @font-face {
   font-family: "ExtraLight";
-  src: url("/assets/fonts/Spartan-ExtraLight.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Light.otf");
 }
 
 @font-face {
   font-family: "Light";
-  src: url("/assets/fonts/Spartan-Light.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Light.otf");
 }
 
 @font-face {
   font-family: "Regular";
-  src: url("/assets/fonts/Spartan-Regular.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Regular.otf");
 }
 
 @font-face {
   font-family: "Medium";
-  src: url("/assets/fonts/Spartan-Medium.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Medium.otf");
 }
 
 @font-face {
   font-family: "SemiBold";
-  src: url("/assets/fonts/Spartan-SemiBold.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Bold.otf");
 }
 
 @font-face {
   font-family: "Bold";
-  src: url("/assets/fonts/Spartan-Bold.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Bold.otf");
 }
 
 @font-face {
   font-family: "ExtraBold";
-  src: url("/assets/fonts/Spartan-ExtraBold.ttf");
+  src: url("/assets/fonts/CreatoDisplay-ExtraBold.otf");
 }
 
 @font-face {
   font-family: "Black";
-  src: url("/assets/fonts/Spartan-Black.ttf");
+  src: url("/assets/fonts/CreatoDisplay-Black.otf");
 }
 
 * {
@@ -79,7 +79,7 @@
 html {
   width: 100vw;
   overflow-x: hidden;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   margin: 0;
   padding: 0;
 }
@@ -90,12 +90,23 @@ body {
   background-color: #000;
   color: var(--color-dark-100);
   font-family: var(--font-semibold);
-  letter-spacing: 0.2em;
+  letter-spacing: normal;
   margin: 0;
   padding: 0;
 }
 
 @layer utilities {
+  /* Letter spacing for uppercase text */
+  .uppercase {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Normal letter spacing for non-uppercase text */
+  .normal-spacing {
+    letter-spacing: normal;
+  }
+
   .flex-center {
     @apply flex items-center justify-center;
   }

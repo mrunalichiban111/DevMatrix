@@ -14,20 +14,7 @@ const Showcase = () => {
   useGSAP(
     () => {
       if (isMobile) {
-        // Mobile: Simple fade-in animation
-        gsap.fromTo(".content", 
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            scrollTrigger: {
-              trigger: container.current,
-              start: "top center",
-              end: "center center",
-              scrub: 1,
-            },
-          }
-        );
+        // Mobile: Disable complex animations
         return;
       }
 
@@ -37,7 +24,7 @@ const Showcase = () => {
             trigger: container.current,
             start: "top top",
             end: "+=250%",
-            scrub: 1,
+            scrub: 0.5, // Reduced from 1 for smoother feel
             pin: true,
           },
         });
@@ -64,38 +51,8 @@ const Showcase = () => {
             "<80%"
           );
       } else {
-        // Tablet: Simplified animation
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: container.current,
-            start: "top top",
-            end: "+=150%",
-            scrub: 1,
-            pin: true,
-          },
-        });
-
-        timeline
-          .to(".mask img", {
-            scale: 1,
-            duration: 1,
-          })
-          .to(".mask img", {
-            scale: 30,
-            transformOrigin: "50% 30%",
-            ease: "power1.inOut",
-            duration: 2,
-          })
-          .to(
-            ".content",
-            {
-              opacity: 1,
-              y: 0,
-              ease: "power1.in",
-              duration: 1,
-            },
-            "<80%"
-          );
+        // Tablet: Disabled for better performance
+        return;
       }
     },
     { scope: container, dependencies: [isMobile, isTablet] }

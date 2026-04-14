@@ -17,18 +17,19 @@ const ModelSection = () => {
   const buttonRef = useRef(null)
 
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" })
+  const isTablet = useMediaQuery({ query: "(max-width: 1024px)" })
 
   useGSAP(() => {
-    // Disable animations on mobile for better performance
-    if (isMobile) return
+    // Disable animations on mobile and tablet for better performance
+    if (isMobile || isTablet) return
 
-    // Timeline for the entire section
+    // Timeline for the entire section with reduced scrub for smoothness
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top center",
         end: "bottom center",
-        scrub: 1,
+        scrub: 0.5, // Reduced from 1 for smoother scrolling
         markers: false,
       },
     })
@@ -55,20 +56,19 @@ const ModelSection = () => {
       "<"
     )
 
-    // Paragraph parallax effect with stagger
+    // Paragraph and button grouped for efficiency
     tl.to(
       pRef.current,
       { y: -30, opacity: 1, ease: "none" },
       "<"
     )
 
-    // Button fade in and slight slide
     tl.to(
       buttonRef.current,
       { y: 0, opacity: 1, ease: "power2.out" },
       "<0.1"
     )
-  }, { scope: sectionRef, dependencies: [isMobile] })
+  }, { scope: sectionRef, dependencies: [isMobile, isTablet] })
 
   return (
     <section ref={sectionRef} className="min-h-screen w-full bg-black overflow-hidden flex flex-col md:flex-row items-stretch justify-start gap-0">

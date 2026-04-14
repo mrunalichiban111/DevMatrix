@@ -6,11 +6,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Initialize ScrollTrigger configuration
 export const initializeScrollTrigger = () => {
-  // This forces a consistent feel across different trackpads/mice
-  ScrollTrigger.normalizeScroll(true);
+  // Disable normalizeScroll to prevent glitchy behavior
+  ScrollTrigger.normalizeScroll(false);
 
-  // You can also adjust the "config" for sensitivity
-  ScrollTrigger.config({ limitCallbacks: true });
+  // Optimize ScrollTrigger performance
+  ScrollTrigger.config({ 
+    limitCallbacks: true,
+    autoRefreshEvents: "visibilitychange,domContentLoaded,load",
+  });
+
+  // Reduce CPU usage
+  gsap.config({ autoSleep: 60 });
 };
 
 export default gsap;

@@ -18,49 +18,24 @@ const Hero = () => {
   const isTablet = useMediaQuery({ query: "(max-width: 1024px)" })
 
   useGSAP(() => {
-    // Disable animations on mobile for performance
-    if (isMobile) return
+    // Disable animations on mobile and tablet for better performance
+    if (isMobile || isTablet) return
 
-    // Parallax effect for left paragraph
-    gsap.to(pLeftRef.current, {
+    // Single timeline for smoother performance
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top center",
         end: "bottom center",
-        scrub: 1,
+        scrub: 0.5, // Reduced from 1 for smoother feel
         markers: false,
       },
-      opacity: 0.5,
-      ease: "none",
     })
 
-    // Parallax effect for right paragraph
-    gsap.to(pRightRef.current, {
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top center",
-        end: "bottom center",
-        scrub: 1,
-        markers: false,
-      },
-      opacity: 0.5,
-      ease: "none",
-    })
-
-    // Parallax effect for h1
-    gsap.to(h1Ref.current, {
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top center",
-        end: "bottom center",
-        scrub: 1,
-        markers: false,
-      },
-      scale: 0.9,
-      opacity: 0.8,
-      ease: "none",
-    })
-  }, { dependencies: [isMobile] })
+    // Parallax effects bundled in one timeline
+    tl.to([pLeftRef.current, pRightRef.current], { opacity: 0.5, ease: "none" }, 0)
+      .to(h1Ref.current, { scale: 0.9, opacity: 0.8, ease: "none" }, 0)
+  }, { dependencies: [isMobile, isTablet] })
 
   return (
     <section ref={sectionRef} className="min-h-screen w-full flex flex-col items-center justify-center pt-16 md:pt-20 px-4 md:px-0">
