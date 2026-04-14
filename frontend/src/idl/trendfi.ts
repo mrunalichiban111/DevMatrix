@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/trendfi.json`.
  */
 export type Trendfi = {
-  "address": "9PAegBz1mGWxqUpEtuegBbvVnNjT2UQjeCNxgSexTQpJ",
+  "address": "4SnGQnEKoYUKMyjG2GK22NdzBBH5mh7PNrodx9EXhWkh",
   "metadata": {
     "name": "trendfi",
     "version": "0.1.0",
@@ -337,8 +337,8 @@ export type Trendfi = {
     },
     {
       "code": 6006,
-      "name": "invalidBetAmount",
-      "msg": "Invalid bet amount"
+      "name": "betTooSmall",
+      "msg": "Bet amount too small"
     },
     {
       "code": 6007,

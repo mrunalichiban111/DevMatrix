@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{transfer, Transfer};
 
-declare_id!("9PAegBz1mGWxqUpEtuegBbvVnNjT2UQjeCNxgSexTQpJ");
+declare_id!("4SnGQnEKoYUKMyjG2GK22NdzBBH5mh7PNrodx9EXhWkh");
 
-const FIXED_BET_LAMPORTS: u64 = 100_000_000; // 0.1 SOL
 const VIRALITY_THRESHOLD: u64 = 50;
-const CREATOR_FEE_BPS: u16 = 500; // 5%. Set to 0 if you want no creator fee.
+const CREATOR_FEE_BPS: u16 = 500;
+const MIN_BET_LAMPORTS: u64 = 10_000_000; // ✅ 0.01 SOL minimum instead of fixed
 
 #[program]
 pub mod trendfi {
@@ -20,7 +20,6 @@ pub mod trendfi {
 
         let now = Clock::get()?.unix_timestamp;
         let pool = &mut ctx.accounts.pool;
-        
 
         pool.nft_mint = nft_mint;
         pool.creator = ctx.accounts.creator.key();
@@ -54,34 +53,33 @@ pub mod trendfi {
         require!(!pool.finalized, CustomError::AlreadyFinalized);
         require!(now < pool.end_ts, CustomError::MarketClosed);
         require!(side <= 1, CustomError::InvalidSide);
-        require!(amount == FIXED_BET_LAMPORTS, CustomError::InvalidBetAmount);
+        require!(amount >= MIN_BET_LAMPORTS, CustomError::BetTooSmall); 
 
-        // Transfer fixed bet from user to the market pool.
         let cpi_accounts = Transfer {
             from: ctx.accounts.user.to_account_info(),
             to: pool_info,
         };
         transfer(
             CpiContext::new(ctx.accounts.system_program.to_account_info(), cpi_accounts),
-            FIXED_BET_LAMPORTS,
+            amount, 
         )?;
 
         user_bet.user = ctx.accounts.user.key();
         user_bet.pool = pool.key();
-        user_bet.amount = FIXED_BET_LAMPORTS;
+        user_bet.amount = amount; 
         user_bet.side = side;
         user_bet.claimed = false;
 
         if side == 0 {
             pool.total_up_bets = pool
                 .total_up_bets
-                .checked_add(FIXED_BET_LAMPORTS)
+                .checked_add(amount)
                 .ok_or(CustomError::MathOverflow)?;
             pool.up_bettors = pool.up_bettors.checked_add(1).ok_or(CustomError::MathOverflow)?;
         } else {
             pool.total_down_bets = pool
                 .total_down_bets
-                .checked_add(FIXED_BET_LAMPORTS)
+                .checked_add(amount)
                 .ok_or(CustomError::MathOverflow)?;
             pool.down_bettors = pool.down_bettors.checked_add(1).ok_or(CustomError::MathOverflow)?;
         }
@@ -89,6 +87,7 @@ pub mod trendfi {
         Ok(())
     }
 
+    
     pub fn finalize_market(ctx: Context<FinalizeMarket>, virality_score: u64) -> Result<()> {
         let now = Clock::get()?.unix_timestamp;
         let pool = &mut ctx.accounts.pool;
@@ -114,7 +113,6 @@ pub mod trendfi {
             .checked_sub(pool.creator_fee_lamports)
             .ok_or(CustomError::MathOverflow)?;
 
-        // Pay creator fee immediately so reward math stays clean.
         if pool.creator_fee_lamports > 0 {
             let pool_info: AccountInfo = pool.to_account_info();
             let creator_info = ctx.accounts.creator.to_account_info();
@@ -169,6 +167,7 @@ pub mod trendfi {
     }
 }
 
+
 #[derive(Accounts)]
 #[instruction(nft_mint: Pubkey, duration_seconds: i64)]
 pub struct InitializeMarket<'info> {
@@ -180,22 +179,15 @@ pub struct InitializeMarket<'info> {
         space = 8 + Pool::LEN
     )]
     pub pool: Account<'info, Pool>,
-
     #[account(mut)]
     pub creator: Signer<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct PlaceBet<'info> {
-    #[account(
-        mut,
-        seeds = [b"pool", pool.nft_mint.as_ref()],
-        bump
-    )]
+    #[account(mut, seeds = [b"pool", pool.nft_mint.as_ref()], bump)]
     pub pool: Account<'info, Pool>,
-
     #[account(
         init,
         payer = user,
@@ -204,35 +196,23 @@ pub struct PlaceBet<'info> {
         space = 8 + UserBet::LEN
     )]
     pub user_bet: Account<'info, UserBet>,
-
     #[account(mut)]
     pub user: Signer<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct FinalizeMarket<'info> {
-    #[account(
-        mut,
-        seeds = [b"pool", pool.nft_mint.as_ref()],
-        bump
-    )]
+    #[account(mut, seeds = [b"pool", pool.nft_mint.as_ref()], bump)]
     pub pool: Account<'info, Pool>,
-
     #[account(mut, address = pool.creator)]
     pub creator: SystemAccount<'info>,
 }
 
 #[derive(Accounts)]
 pub struct ClaimReward<'info> {
-    #[account(
-        mut,
-        seeds = [b"pool", pool.nft_mint.as_ref()],
-        bump
-    )]
+    #[account(mut, seeds = [b"pool", pool.nft_mint.as_ref()], bump)]
     pub pool: Account<'info, Pool>,
-
     #[account(
         mut,
         seeds = [b"user-bet", pool.key().as_ref(), user.key().as_ref()],
@@ -240,7 +220,6 @@ pub struct ClaimReward<'info> {
         has_one = user
     )]
     pub user_bet: Account<'info, UserBet>,
-
     #[account(mut)]
     pub user: Signer<'info>,
 }
@@ -251,37 +230,20 @@ pub struct Pool {
     pub creator: Pubkey,
     pub start_ts: i64,
     pub end_ts: i64,
-
     pub total_up_bets: u64,
     pub total_down_bets: u64,
     pub up_bettors: u64,
     pub down_bettors: u64,
-
     pub virality_score: u64,
     pub reward_pool_lamports: u64,
     pub creator_fee_lamports: u64,
     pub creator_fee_bps: u16,
-
     pub finalized: bool,
-    pub result: u8, // 0 = UP, 1 = DOWN
+    pub result: u8,
 }
 
 impl Pool {
-    pub const LEN: usize =
-        32 + // nft_mint
-        32 + // creator
-        8 +  // start_ts
-        8 +  // end_ts
-        8 +  // total_up_bets
-        8 +  // total_down_bets
-        8 +  // up_bettors
-        8 +  // down_bettors
-        8 +  // virality_score
-        8 +  // reward_pool_lamports
-        8 +  // creator_fee_lamports
-        2 +  // creator_fee_bps
-        1 +  // finalized
-        1;   // result
+    pub const LEN: usize = 32+32+8+8+8+8+8+8+8+8+8+2+1+1;
 }
 
 #[account]
@@ -289,17 +251,12 @@ pub struct UserBet {
     pub user: Pubkey,
     pub pool: Pubkey,
     pub amount: u64,
-    pub side: u8,   // 0 = UP, 1 = DOWN
+    pub side: u8,
     pub claimed: bool,
 }
 
 impl UserBet {
-    pub const LEN: usize =
-        32 + // user
-        32 + // pool
-        8 +  // amount
-        1 +  // side
-        1;   // claimed
+    pub const LEN: usize = 32+32+8+1+1;
 }
 
 #[error_code]
@@ -316,8 +273,8 @@ pub enum CustomError {
     NoWinners,
     #[msg("Invalid side")]
     InvalidSide,
-    #[msg("Invalid bet amount")]
-    InvalidBetAmount,
+    #[msg("Bet amount too small")]
+    BetTooSmall, // ✅ new error
     #[msg("You are not a winner")]
     NotWinner,
     #[msg("Insufficient pool balance")]
