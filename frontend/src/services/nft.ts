@@ -55,7 +55,7 @@ export const uploadMetadata = async (metadata: any) => {
 
 export const mintNFT = async (
   wallet: any,
-  imageFile: File,
+  imageFile: File | null,
   title: string,
   description: string
 ) => {
@@ -64,15 +64,20 @@ export const mintNFT = async (
   const { createNft, mplTokenMetadata } = await import("@metaplex-foundation/mpl-token-metadata");
   const { generateSigner, percentAmount } = await import("@metaplex-foundation/umi");
 
-  // 1️⃣ Upload image
-  const imageUrl = await uploadToIPFS(imageFile);
+  // 1️⃣ Upload image when present
+  const imageUrl = imageFile ? await uploadToIPFS(imageFile) : null;
 
   // 2️⃣ Upload metadata
-  const metadataUri = await uploadMetadata({
+  const metadata: Record<string, unknown> = {
     name: title,
     description,
-    image: imageUrl,
-  });
+  };
+
+  if (imageUrl) {
+    metadata.image = imageUrl;
+  }
+
+  const metadataUri = await uploadMetadata(metadata);
 
   console.log("✅ Metadata URI:", metadataUri);
 

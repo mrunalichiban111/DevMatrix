@@ -13,53 +13,53 @@ const Showcase = () => {
 
   useGSAP(
     () => {
-      if (isMobile) {
-        // Mobile: Disable complex animations
+      if (isMobile || isTablet) {
+        gsap.set(".mask img", { scale: 1 });
+        gsap.set(".content", { opacity: 1, y: 0 });
         return;
       }
 
-      if (!isTablet) {
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: container.current,
-            start: "top top",
-            end: "+=250%",
-            scrub: 0.5, // Reduced from 1 for smoother feel
-            pin: true,
-          },
-        });
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: container.current,
+          start: "top top+=8",
+          end: "+=250%",
+          scrub: 0.5, // Reduced from 1 for smoother feel
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
 
-        timeline
-          .to(".mask img", {
-            scale: 1,
+      timeline
+        .to(".mask img", {
+          scale: 1,
+          duration: 1,
+        })
+        .to(".mask img", {
+          scale: 60,
+          transformOrigin: "50% 30%",
+          ease: "power1.inOut",
+          duration: 3,
+        })
+        .to(
+          ".content",
+          {
+            opacity: 1,
+            y: 0,
+            ease: "power1.in",
             duration: 1,
-          })
-          .to(".mask img", {
-            scale: 60,
-            transformOrigin: "50% 30%", 
-            ease: "power1.inOut",
-            duration: 3,
-          })
-          .to(
-            ".content",
-            {
-              opacity: 1,
-              y: 0,
-              ease: "power1.in",
-              duration: 1,
-            },
-            "<80%"
-          );
-      } else {
-        // Tablet: Disabled for better performance
-        return;
-      }
+          },
+          "<80%"
+        );
+
     },
     { scope: container, dependencies: [isMobile, isTablet] }
   );
 
   return (
-    <section id="showcase" ref={container} className="overflow-hidden">
+    <section id="showcase" ref={container} className="relative z-10 overflow-hidden bg-black">
       <div className="media">
         <video 
           src="/assets/videos/video.mp4" 
@@ -79,7 +79,11 @@ const Showcase = () => {
         />
       </div>
 
-      <div className="content relative z-50 px-4 md:px-0" style={{ opacity: 0, transform: "translateY(50px)" }}>
+      <div
+        id="know-more"
+        className="content relative z-50 scroll-mt-[7vh] px-4 md:px-0"
+        style={{ opacity: 0, transform: "translateY(50px)" }}
+      >
         <div className="wrapper mt-5">
           <div className="lg:max-w-md md:pt-5 pt-3">
             <h2 className="font-regular uppercase text-white text-[32px] md:text-[45px] leading-[40px] md:leading-[50px] tracking-widest">
@@ -106,6 +110,13 @@ const Showcase = () => {
                 Learn how we calculate virality scores
               </p>
             </div>
+
+            <a
+              href="/discover"
+              className="inline-flex w-fit items-center justify-center rounded-full border border-[#39FF14] bg-transparent px-6 py-2 my-5 text-[10px] sm:text-xs uppercase tracking-[0.35em] text-[#39FF14] shadow-[0_0_22px_rgba(57,255,20,0.2)] transition hover:bg-[#39FF14] hover:text-black"
+            >
+              Get Started - See the curve
+            </a>
           </div>
 
           <div className="max-w-xs md:max-w-3xs space-y-8 md:space-y-14 uppercase pt-5 md:pt-5 px-0 md:px-0">

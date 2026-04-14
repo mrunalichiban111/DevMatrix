@@ -1,30 +1,53 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import navLinks from '@/constants/index.ts';
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import AuthModal from '@/components/AuthModal';
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authEntryFlow, setAuthEntryFlow] = useState<'manual' | 'google-return'>('manual');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
   // 1. Initialize the wallet hooks
   const { connected, disconnect, publicKey } = useWallet();
-  const { setVisible } = useWalletModal();
 
   // Get first 3 characters of address
   const shortAddress = publicKey ? publicKey.toString().slice(0, 3) + '..' : '';
 
+  useEffect(() => {
+    if (searchParams.get('auth') !== 'google') {
+      return;
+    }
+
+    setAuthEntryFlow('google-return');
+    setAuthModalOpen(true);
+
+    const basePath = pathname || '/';
+    router.replace(basePath);
+  }, [pathname, router, searchParams]);
+
   // 2. Handle the click event
-  const handleWalletClick = () => {
+  const handleUserClick = () => {
     if (!connected) {
-      setVisible(true); // Open the Phantom modal
+      setAuthEntryFlow('manual');
+      setAuthModalOpen(true); // Open custom auth modal
     } else {
       setDropdownOpen(!dropdownOpen); // Toggle dropdown when connected
     }
+  };
+
+  const handleCloseAuthModal = () => {
+    setAuthModalOpen(false);
+    setAuthEntryFlow('manual');
   };
 
   // 3. Handle disconnect
@@ -62,21 +85,22 @@ export default function Navbar() {
             </ul>
 
             <div className="flex items-center gap-3">
-                <img src="/assets/search.svg" alt="search" className="w-5 h-5 md:w-6 md:h-6" />
-                
-                {/* Wallet Button with Dropdown */}
+                <AuthModal
+                  isOpen={authModalOpen}
+                  onClose={handleCloseAuthModal}
+                  entryFlow={authEntryFlow}
+                  returnTo={`${pathname || '/'}?auth=google`}
+                />
+                {/* User Button with Dropdown */}
                 <div ref={dropdownRef} className="relative">
                   <button 
-                    onClick={handleWalletClick}
+                    onClick={handleUserClick}
                     className="relative transition-transform duration-200 hover:scale-110 flex items-center gap-2"
-                    aria-label="Connect Wallet"
+                    aria-label="User Profile"
                   >
-                      <div className="relative">
-                        <img 
-                          src="/assets/wallet.svg" 
-                          className={`h-5 md:h-6 w-auto ${connected ? '' : 'brightness-5 invert'}`} 
-                          alt="Connect Wallet" 
-                        />
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white w-6 h-6">
+                            <path d="M20 21C20 19.6044 20 18.9067 19.8278 18.3389C19.44 17.0605 18.4395 16.06 17.1611 15.6722C16.5933 15.5 15.8956 15.5 14.5 15.5H9.5C8.10444 15.5 7.40665 15.5 6.83886 15.6722C5.56045 16.06 4.56004 17.0605 4.17224 18.3389C4 18.9067 4 19.6044 4 21M16.5 7.5C16.5 9.98528 14.4853 12 12 12C9.51472 12 7.5 9.98528 7.5 7.5C7.5 5.01472 9.51472 3 12 3C14.4853 3 16.5 5.01472 16.5 7.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                         
                         {/* Pulsing green indicator when connected */}
                         {connected && (
@@ -85,7 +109,6 @@ export default function Navbar() {
                                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                             </span>
                         )}
-                      </div>
                       
                       {/* Show address when connected */}
                       {connected && (
@@ -96,6 +119,12 @@ export default function Navbar() {
                   {/* Glass Morphism Dropdown */}
                   {connected && dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 rounded-lg backdrop-blur-md bg-black/40 border border-white/20 shadow-2xl overflow-hidden z-50">
+                      <a
+                        href="/discover"
+                        className="block px-4 py-3 text-light-100 text-sm font-regular uppercase hover:bg-white/10 transition-colors duration-200 border-b border-white/10"
+                      >
+                        Discover
+                      </a>
                       <a
                         href="/dashboard"
                         className="block px-4 py-3 text-light-100 text-sm font-regular uppercase hover:bg-white/10 transition-colors duration-200 border-b border-white/10"
