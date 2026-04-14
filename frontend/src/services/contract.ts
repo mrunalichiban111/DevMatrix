@@ -1,7 +1,7 @@
 import { BN, web3 } from "@coral-xyz/anchor";
 import { getProgram } from "../utils/anchor";
 
-const FIXED_BET_LAMPORTS = new BN(100_000_000); // 0.1 SOL
+// const FIXED_BET_LAMPORTS = new BN(100_000_000); // 0.1 SOL
 
 export type MarketSide = 0 | 1; // 0 = UP, 1 = DOWN
 
@@ -57,7 +57,8 @@ export async function initializeMarket(
 export async function placeBet(
   wallet: any,
   nftMint: string | web3.PublicKey,
-  side: MarketSide
+  side: MarketSide,
+  amountSol: number
 ) {
   assertWallet(wallet);
 
@@ -71,9 +72,9 @@ export async function placeBet(
     wallet.publicKey,
     program.programId
   );
-
+  const amountLamports = new BN(amountSol * 1e9);
   const tx = await program.methods
-    .placeBet(FIXED_BET_LAMPORTS, side)
+    .placeBet(amountLamports, side)
     .accounts({
       pool: poolPda,
       userBet: userBetPda,

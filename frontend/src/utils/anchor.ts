@@ -2,7 +2,7 @@ import { AnchorProvider, Program, web3, Idl } from "@coral-xyz/anchor";
 import idl from "../idl/trendfi.json";
 import type {Trendfi} from "../idl/trendfi.ts";
 
-const programID = new web3.PublicKey("9PAegBz1mGWxqUpEtuegBbvVnNjT2UQjeCNxgSexTQpJ");
+const programID = new web3.PublicKey("4SnGQnEKoYUKMyjG2GK22NdzBBH5mh7PNrodx9EXhWkh");
 
 export const getProgram = (wallet: any): Program<Idl> => {
   const connection = new web3.Connection("https://api.devnet.solana.com");
